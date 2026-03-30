@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Inauguração - ABC Bonsais</title>
+
+  <style>
+    /* Fundo da página com textura suave */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('imagem2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #2f4f4f;
+      text-align: center;
+    }
+
+    /* Container central com leve transparência */
+    .container {
+      max-width: 600px;
+      margin: 60px auto;
+      background: rgba(255, 255, 255, 0.92);
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      color: #3a7d44;
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      color: #6b8e23;
+      font-weight: normal;
+      margin-top: 0;
+    }
+
+    /* Bonsai central */
+    .bonsai-destaque {
+      width: 200px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 8px 15px rgba(0,0,0,0.2));
+      border-radius: 10px;
+    }
+
+    p {
+      color: #556b2f;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Inputs com detalhes de folhas */
+    input {
+      width: 85%;
+      padding: 12px 15px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: 1px solid #cde0c9;
+      background: #f9fdf9 url('imagem3.png') no-repeat 95% center;
+      background-size: 22px 22px;
+      font-size: 14px;
+    }
+
+    /* Botão com ícone de folhas */
+    button {
+      background: url('imagem3.png') no-repeat center left, #3a7d44;
+      color: white;
+      border: none;
+      padding: 12px 25px 12px 50px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      background-size: 25px 25px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background-color: #2e6b38;
+      transform: translateY(-2px);
+    }
+
+    .codigo {
+      margin-top: 25px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #2e8b57;
+    }
+
+    .erro {
+      color: red;
+      margin-top: 12px;
+    }
+
+    .checkbox {
+      margin: 12px 0;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .lgpd {
+      margin-top: 18px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .brand {
+      font-weight: bold;
+      color: #2e6b38;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <!-- Bonsai central -->
+    <img src="imagem1.png" alt="Bonsai" class="bonsai-destaque" />
+
+    <h1>🌳 Grande Inauguração</h1>
+    <h2><span class="brand">ABC Bonsais</span></h2>
+
+    <p>
+      Cadastre-se e receba seu código exclusivo de <strong>30% OFF</strong> na sua primeira conta.
+      Aproveite a inauguração da nossa loja e descubra o mundo tranquilo dos bonsais.
+    </p>
+
+    <form id="form">
+      <input type="email" id="email" placeholder="Digite seu e-mail" required />
+
+      <div class="checkbox">
+        <input type="checkbox" id="consentimento" />
+        <label for="consentimento">
+          Autorizo o envio do código promocional para meu e-mail
+        </label>
+      </div>
+
+      <button type="submit">Receber código 🌿</button>
+    </form>
+
+    <div class="codigo" id="codigo"></div>
+    <div class="erro" id="erro"></div>
+
+    <p class="lgpd">
+      Seus dados são armazenados apenas neste dispositivo e utilizados exclusivamente
+      para gerar seu código, conforme a LGPD.
+    </p>
+  </div>
+
+  <script>
+    function gerarCodigo() {
+      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let codigo = "BONSAI30-";
+      for (let i = 0; i < 6; i++) {
+        codigo += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return codigo;
+    }
+
+    function obterDados() {
+      return JSON.parse(localStorage.getItem("bonsai_clientes")) || [];
+    }
+
+    function salvarDados(dados) {
+      localStorage.setItem("bonsai_clientes", JSON.stringify(dados));
+    }
+
+    function emailJaExiste(email) {
+      const dados = obterDados();
+      return dados.find((cliente) => cliente.email === email);
+    }
+
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById("email").value;
+      const consentimento = document.getElementById("consentimento").checked;
+      const erro = document.getElementById("erro");
+      erro.innerText = "";
+
+      if (!consentimento) {
+        erro.innerText = "Você precisa autorizar o envio do código.";
+        return;
+      }
+
+      if (emailJaExiste(email)) {
+        erro.innerText = "Este e-mail já recebeu um código.";
+        return;
+      }
+
+      const codigo = gerarCodigo();
+
+      const dados = obterDados();
+      dados.push({ email, codigo });
+      salvarDados(dados);
+
+      document.getElementById("codigo").innerText = "🌿 Seu código: " + codigo;
+
+      // Abre o cliente de e-mail
+      window.location.href = `mailto:${email}?subject=Seu código ABC Bonsais 🌱&body=Seu código é: ${codigo}`;
+    });
+  </script>
+</body>
+</html>
